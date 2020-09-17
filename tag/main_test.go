@@ -64,3 +64,37 @@ func TestGet(t *testing.T) {
 
 	}
 }
+
+func TestIncrement(t *testing.T) {
+	var cases = []struct {
+		name    string
+		version string
+		major   bool
+		minor   bool
+		patch   bool
+		exp     string
+	}{
+		{
+			name:    "increase major",
+			version: "v1.1.1",
+			major:   true,
+			exp:     "v2.0.0",
+		},
+		{
+			name:    "increase minor",
+			version: "v1.1.1",
+			minor:   true,
+			exp:     "v1.2.0",
+		},
+		{
+			name:    "increase patch",
+			version: "v1.1.1",
+			patch:   true,
+			exp:     "v1.1.2",
+		},
+	}
+
+	for _, test := range cases {
+		assert.Equal(t, test.exp, Increment(test.version, test.major, test.minor, test.patch), test.name)
+	}
+}

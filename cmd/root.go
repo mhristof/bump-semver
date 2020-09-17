@@ -10,6 +10,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	major bool
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "semver",
 	Short: "Create semver releases",
@@ -18,15 +22,38 @@ var rootCmd = &cobra.Command{
 
 		pwd, err := os.Getwd()
 		if err != nil {
-			panic(err)
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Panic("Cannot get pwd")
+
 		}
 
 		abs, err := filepath.Abs(pwd)
 		if err != nil {
-			panic(err)
+			log.WithFields(log.Fields{
+				"err": err,
+				"pwd": pwd,
+			}).Panic("Cannot get abs path")
+
 		}
 
-		tag.Get(abs)
+		list := tag.Get(abs)
+		major, err := cmd.Flags().GetBool("major")
+		minor, err := cmd.Flags().GetBool("minor")
+		patch, err := cmd.Flags().GetBool("patch")
+
+		// minor is the default increment and we need to turn if off if one
+		// of the other levels are set.
+		minor = minor && !(major || patch)
+
+		next := tag.Increment(list[len(list)-1], major, minor, patch)
+
+		gitCmd := fmt.Sprintf("git -C %s tag %s", abs, next)
+		if dry, err := cmd.Flags().GetBool("dryrun"); err == nil && dry {
+			fmt.Println(gitCmd)
+		} else {
+			tag.Eval(gitCmd)
+		}
 	},
 }
 
@@ -42,6 +69,11 @@ func Verbose(cmd *cobra.Command) {
 	}
 }
 func init() {
+	rootCmd.Flags().BoolP("major", "M", false, "Perform a major release")
+	rootCmd.Flags().BoolP("minor", "m", true, "Perform a minor release")
+	rootCmd.Flags().BoolP("patch", "p", false, "Perform a patch release")
+
+	rootCmd.PersistentFlags().BoolP("dryrun", "n", false, "Dry run mode")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Increase verbosity")
 }
 
