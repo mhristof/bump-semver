@@ -11,12 +11,13 @@ import (
 )
 
 var (
-	major bool
+	version string
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "semver",
-	Short: "Create semver releases",
+	Use:     "semver",
+	Short:   "Create semver releases",
+	Version: version,
 	Run: func(cmd *cobra.Command, args []string) {
 		Verbose(cmd)
 

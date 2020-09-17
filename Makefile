@@ -6,6 +6,13 @@ SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 .ONESHELL:
 
+GIT_REF := $(shell git rev-parse --short HEAD)
+GIT_TAG := $(shell git name-rev --tags --name-only $(GIT_REF))
+
+all: ./bin/semver.darwin ./bin/semver.linux
+
+./bin/semver.%: $(shell find ./ -name '*.go')
+	GOOS=$* go build -o $@ -ldflags "-X github.com/mhristof/semver/cmd.version=$(GIT_TAG)+$(GIT_REF)" main.go
 
 fast-test:  ## Run fast tests
 	go test ./... -tags fast
