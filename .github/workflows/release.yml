@@ -10,7 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v2
-        - run: make test
+        - run: |
+            git config --global user.name "github"
+            git config --global user.name "github"
+            make test
         - run: make all
         - name: Create Release
           id: create_release
