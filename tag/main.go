@@ -20,6 +20,7 @@ func eval(command string) []string {
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println(string(stderr.Bytes()))
 		panic(err)
 	}
 

@@ -7,5 +7,6 @@ require (
 	github.com/mhristof/germ v1.2.3
 	github.com/sirupsen/logrus v1.5.0
 	github.com/spf13/cobra v1.0.0
+	github.com/stretchr/testify v1.5.1
 	golang.org/x/mod v0.3.0
 )
