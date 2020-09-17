@@ -49,13 +49,13 @@ func TestGet(t *testing.T) {
 		defer os.Remove(folder)
 
 		fmt.Println(folder)
-		eval(fmt.Sprintf("git -C %s init", folder))
-		eval(fmt.Sprintf("touch %s/test", folder))
-		eval(fmt.Sprintf("git -C %s add .", folder))
-		eval(fmt.Sprintf("git -C %s commit -m init", folder))
+		Eval(fmt.Sprintf("git -C %s init", folder))
+		Eval(fmt.Sprintf("touch %s/test", folder))
+		Eval(fmt.Sprintf("git -C %s add .", folder))
+		Eval(fmt.Sprintf("git -C %s commit -m init", folder))
 
 		for _, tag := range test.tags {
-			eval(fmt.Sprintf("git -C %s tag %s", folder, tag))
+			Eval(fmt.Sprintf("git -C %s tag %s", folder, tag))
 		}
 
 		tags := Get(folder)
