@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
 func Get(path string) []string {
@@ -14,9 +15,15 @@ func Get(path string) []string {
 		panic(err)
 	}
 
-	tagrefs, err := r.Tags()
+	tags, err := r.TagObjects()
+	if err != nil {
+		panic(err)
+	}
 
-	fmt.Println(fmt.Sprintf("tagrefs: %+v", tagrefs))
+	err = tags.ForEach(func(t *object.Tag) error {
+		fmt.Println(t)
+		return nil
+	})
 
 	return []string{}
 }
