@@ -20,10 +20,19 @@ var (
 				panic(err)
 			}
 
-			if updates {
-				fmt.Println("New version downloaded!")
-				updateFunc()
+			if !updates {
+				return
 			}
+
+			if silent, _ := cmd.Flags().GetBool("silent"); !silent {
+				fmt.Println("New version downloaded!")
+			}
+
+			if dryrun, _ := cmd.Flags().GetBool("dryrun"); dryrun {
+				return
+			}
+
+			updateFunc()
 		},
 	}
 )
