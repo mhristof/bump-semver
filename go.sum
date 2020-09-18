@@ -76,6 +76,9 @@ github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czP
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/mhristof/germ v1.2.3 h1:jzlyBIzLm1h43TsuW1HHoPlY+Kz0crdatiFYWCMEZDo=
 github.com/mhristof/germ v1.2.3/go.mod h1:wSRw+qUe8mu/r2o4dg5S9pblyRnL6jiI9FnGqTOrzeQ=
+github.com/mhristof/germ v1.3.0/go.mod h1:wSRw+qUe8mu/r2o4dg5S9pblyRnL6jiI9FnGqTOrzeQ=
+github.com/mhristof/go-update v0.1.0 h1:RwEUltg0pWrdvbGwvb07SLxcsjcyz8H5BxyXiLVGln8=
+github.com/mhristof/go-update v0.1.0/go.mod h1:7XKz6UuKW5TlW5brD+JgYz4rhCeJE/OnwdxXGvulOQA=
 github.com/mitchellh/go-homedir v1.1.0/go.mod h1:SfyaCUpYCn1Vlf4IUYiD9fPX4A5wJrkLzIz1N1q0pr0=
 github.com/mitchellh/mapstructure v1.1.2/go.mod h1:FVVH3fgwuzCH5S8UJGiWEs2h04kUh9fWfEaFds41c1Y=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
