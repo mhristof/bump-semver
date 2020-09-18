@@ -50,11 +50,15 @@ var rootCmd = &cobra.Command{
 		next := tag.Increment(list[len(list)-1], major, minor, patch)
 
 		gitCmd := fmt.Sprintf("git -C %s tag %s", abs, next)
-		if dry, err := cmd.Flags().GetBool("dryrun"); err == nil && dry {
+		if silent, _ := cmd.Flags().GetBool("silent"); !silent {
 			fmt.Println(gitCmd)
-		} else {
-			tag.Eval(gitCmd)
 		}
+
+		if dryrun, _ := cmd.Flags().GetBool("dryrun"); dryrun {
+			return
+		}
+
+		tag.Eval(gitCmd)
 	},
 }
 
@@ -73,12 +77,12 @@ func init() {
 	rootCmd.Flags().BoolP("major", "M", false, "Perform a major release")
 	rootCmd.Flags().BoolP("minor", "m", true, "Perform a minor release")
 	rootCmd.Flags().BoolP("patch", "p", false, "Perform a patch release")
+	rootCmd.Flags().BoolP("silent", "s", false, "Disable all output")
 
 	rootCmd.PersistentFlags().BoolP("dryrun", "n", false, "Dry run mode")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Increase verbosity")
 }
 
-// Execute The main function for the root command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
