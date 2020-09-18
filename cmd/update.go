@@ -14,7 +14,7 @@ var (
 		Short: "Update the binary with a new version",
 		Run: func(cmd *cobra.Command, args []string) {
 			url := fmt.Sprintf("https://github.com/mhristof/semver/releases/latest/download/semver.%s", runtime.GOOS)
-			//
+
 			updates, updateFunc, err := update.Check(url)
 			if err != nil {
 				panic(err)
