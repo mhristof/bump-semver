@@ -21,27 +21,28 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		Verbose(cmd)
 
-		pwd, err := os.Getwd()
-		if err != nil {
-			log.WithFields(log.Fields{
-				"err": err,
-			}).Panic("Cannot get pwd")
+		list, abs := tags()
 
-		}
-
-		abs, err := filepath.Abs(pwd)
-		if err != nil {
-			log.WithFields(log.Fields{
-				"err": err,
-				"pwd": pwd,
-			}).Panic("Cannot get abs path")
-
-		}
-
-		list := tag.Get(abs)
 		major, err := cmd.Flags().GetBool("major")
+		if err != nil {
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Panic("Cannot get major flag")
+
+		}
 		minor, err := cmd.Flags().GetBool("minor")
+		if err != nil {
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Panic("Cannot get minor flag")
+		}
 		patch, err := cmd.Flags().GetBool("patch")
+		if err != nil {
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Error("Cannot get patch flag")
+
+		}
 
 		// minor is the default increment and we need to turn if off if one
 		// of the other levels are set.
@@ -60,6 +61,27 @@ var rootCmd = &cobra.Command{
 
 		tag.Eval(gitCmd)
 	},
+}
+
+func tags() ([]string, string) {
+	pwd, err := os.Getwd()
+	if err != nil {
+		log.WithFields(log.Fields{
+			"err": err,
+		}).Panic("Cannot get pwd")
+
+	}
+
+	abs, err := filepath.Abs(pwd)
+	if err != nil {
+		log.WithFields(log.Fields{
+			"err": err,
+			"pwd": pwd,
+		}).Panic("Cannot get abs path")
+
+	}
+
+	return tag.Get(abs), abs
 }
 
 // Verbose Increase verbosity
