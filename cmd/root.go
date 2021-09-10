@@ -28,27 +28,34 @@ var rootCmd = &cobra.Command{
 			log.WithFields(log.Fields{
 				"err": err,
 			}).Panic("Cannot get major flag")
-
 		}
+
 		minor, err := cmd.Flags().GetBool("minor")
 		if err != nil {
 			log.WithFields(log.Fields{
 				"err": err,
 			}).Panic("Cannot get minor flag")
 		}
+
 		patch, err := cmd.Flags().GetBool("patch")
 		if err != nil {
 			log.WithFields(log.Fields{
 				"err": err,
 			}).Error("Cannot get patch flag")
-
 		}
 
 		// minor is the default increment and we need to turn if off if one
 		// of the other levels are set.
 		minor = minor && !(major || patch)
 
-		next := tag.Increment(list[len(list)-1], major, minor, patch)
+		var lastTag string
+		if len(list) == 0 {
+			lastTag = "v0.0.0"
+		} else {
+			lastTag = list[len(list)-1]
+		}
+
+		next := tag.Increment(lastTag, major, minor, patch)
 
 		gitCmd := fmt.Sprintf("git -C %s tag %s", abs, next)
 		if silent, _ := cmd.Flags().GetBool("silent"); !silent {

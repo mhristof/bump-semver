@@ -13,7 +13,7 @@ import (
 	"golang.org/x/mod/semver"
 )
 
-func Eval(command string) []string {
+func Eval(command string) ([]string, error) {
 	parts := strings.Split(command, " ")
 	cmd := exec.Command(parts[0], parts[1:]...)
 	var stdout, stderr bytes.Buffer
@@ -21,13 +21,10 @@ func Eval(command string) []string {
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		log.WithFields(log.Fields{
-			"command": command,
-			"stderr":  string(stderr.Bytes()),
-		}).Panic("Error executing command")
+		return []string{}, err
 	}
 
-	return strings.Split(strings.TrimSuffix(string(stdout.Bytes()), "\n"), "\n")
+	return strings.Split(strings.TrimSuffix(string(stdout.Bytes()), "\n"), "\n"), nil
 }
 
 type BySemVer []string
@@ -37,9 +34,14 @@ func (a BySemVer) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a BySemVer) Less(i, j int) bool { return semver.Compare(a[i], a[j]) < 0 }
 
 func Get(path string) []string {
-
 	var ret []string
-	for _, tag := range Eval(fmt.Sprintf("git -C %s show-ref --tag", path)) {
+
+	tags, err := Eval(fmt.Sprintf("git -C %s show-ref --tag", path))
+	if err != nil {
+		return []string{}
+	}
+
+	for _, tag := range tags {
 		parts := strings.Split(tag, " ")
 		vTag := filepath.Base(parts[1])
 
@@ -50,11 +52,12 @@ func Get(path string) []string {
 
 			continue
 		}
-		ret = append(ret, vTag)
 
+		ret = append(ret, vTag)
 	}
 
 	sort.Sort(BySemVer(ret))
+
 	return ret
 }
 
