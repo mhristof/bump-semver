@@ -15,6 +15,10 @@ all: ./bin/semver.darwin ./bin/semver.linux
 ./bin/semver.%: $(shell find ./ -name '*.go')
 	GOOS=$* go build -o $@ -ldflags "-X github.com/mhristof/semver/cmd.version=$(GIT_TAG)+$(GIT_REF)" main.go
 
+.PHONY: install
+install: ./bin/semver.darwin
+	cp $< ~/bin/semver
+
 .PHONY: fast-test
 fast-test:  ## Run fast tests
 	go test ./... -tags fast
