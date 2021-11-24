@@ -51,7 +51,6 @@ func TestGet(t *testing.T) {
 		}
 		defer os.Remove(folder)
 
-		fmt.Println(folder)
 		Eval(fmt.Sprintf("git -C %s init", folder))
 		Eval(fmt.Sprintf("touch %s/test", folder))
 		Eval(fmt.Sprintf("git -C %s add .", folder))
@@ -139,6 +138,16 @@ func TestFindNext(t *testing.T) {
 				git commit --allow-empty -m bug:-test`), "\n"),
 			repo:  tmpDir(t),
 			minor: true,
+		},
+		{
+			name: "cannot determine next version",
+			cmds: strings.Split(heredoc.Doc(`
+				git init
+				git commit --allow-empty -m initial.import
+				git tag v0.1.0
+				git commit --allow-empty -m test
+				git commit --allow-empty -m test`), "\n"),
+			repo: tmpDir(t),
 		},
 	}
 

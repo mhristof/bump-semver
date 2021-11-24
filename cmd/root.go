@@ -42,10 +42,6 @@ var rootCmd = &cobra.Command{
 			}).Error("Cannot get patch flag")
 		}
 
-		// minor is the default increment and we need to turn if off if one
-		// of the other levels are set.
-		minor = minor && !(major || patch)
-
 		var lastTag string
 		if len(list) == 0 {
 			lastTag = "v0.0.0"
@@ -63,6 +59,9 @@ var rootCmd = &cobra.Command{
 		if auto {
 			major, minor, patch = tag.FindNext(lastTag)
 		}
+
+		// default to minor release
+		minor = minor || !major && !minor && !patch
 
 		next := tag.Increment(lastTag, major, minor, patch)
 
@@ -112,7 +111,7 @@ func Verbose(cmd *cobra.Command) {
 
 func init() {
 	rootCmd.Flags().BoolP("major", "M", false, "Perform a major release")
-	rootCmd.Flags().BoolP("minor", "m", false, "Perform a minor release")
+	rootCmd.Flags().BoolP("minor", "m", false, "Perform a minor release. Default if auto is disabled.")
 	rootCmd.Flags().BoolP("patch", "p", false, "Perform a patch release")
 	rootCmd.Flags().BoolP("silent", "s", false, "Disable all output")
 	rootCmd.Flags().BoolP("auto", "a", true, "Autodetect next version based on commit messages")

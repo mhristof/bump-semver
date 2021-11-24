@@ -110,12 +110,14 @@ func FindNext(lastTag string) (major bool, minor bool, patch bool) {
 	}
 
 	for _, line := range strings.Split(stdout.String(), "\n") {
-		log.WithFields(log.Fields{
-			"line": line,
-		}).Debug("git log line")
+		patch = patch || strings.HasPrefix(line, "bug:")
+		minor = minor || strings.HasPrefix(line, "feature:")
 
-		patch = strings.HasPrefix(line, "bug:")
-		minor = strings.HasPrefix(line, "feature:")
+		log.WithFields(log.Fields{
+			"line":  line,
+			"patch": patch,
+			"minor": minor,
+		}).Debug("git log line")
 	}
 
 	return false, minor, !minor && patch
