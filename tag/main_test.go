@@ -3,15 +3,16 @@ package tag
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"testing"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGet(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		name string
 		tags []string
 		exp  []string
@@ -66,7 +67,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestIncrement(t *testing.T) {
-	var cases = []struct {
+	cases := []struct {
 		name    string
 		version string
 		major   bool

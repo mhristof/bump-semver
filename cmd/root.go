@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mhristof/semver/log"
 	"github.com/mhristof/semver/tag"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 

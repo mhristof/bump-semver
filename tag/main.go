@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	isemver "github.com/Masterminds/semver"
-	"github.com/mhristof/semver/log"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/mod/semver"
 )
 
@@ -67,7 +67,6 @@ func Increment(version string, major, minor, patch bool) string {
 		log.WithFields(log.Fields{
 			"err": err,
 		}).Panic("Cannot convert to semver")
-
 	}
 
 	var newV isemver.Version
