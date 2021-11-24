@@ -53,6 +53,17 @@ var rootCmd = &cobra.Command{
 			lastTag = list[len(list)-1]
 		}
 
+		auto, err := cmd.Flags().GetBool("auto")
+		if err != nil {
+			log.WithFields(log.Fields{
+				"err": err,
+			}).Panic("cannot retrieve auto value")
+		}
+
+		if auto {
+			major, minor, patch = tag.FindNext(lastTag)
+		}
+
 		next := tag.Increment(lastTag, major, minor, patch)
 
 		gitCmd := fmt.Sprintf("git -C %s tag %s", abs, next)
@@ -101,9 +112,10 @@ func Verbose(cmd *cobra.Command) {
 
 func init() {
 	rootCmd.Flags().BoolP("major", "M", false, "Perform a major release")
-	rootCmd.Flags().BoolP("minor", "m", true, "Perform a minor release")
+	rootCmd.Flags().BoolP("minor", "m", false, "Perform a minor release")
 	rootCmd.Flags().BoolP("patch", "p", false, "Perform a patch release")
 	rootCmd.Flags().BoolP("silent", "s", false, "Disable all output")
+	rootCmd.Flags().BoolP("auto", "a", true, "Autodetect next version based on commit messages")
 
 	rootCmd.PersistentFlags().BoolP("dryrun", "n", false, "Dry run mode")
 	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Increase verbosity")

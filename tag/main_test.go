@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/MakeNowJust/heredoc"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/stretchr/testify/assert"
@@ -97,5 +99,66 @@ func TestIncrement(t *testing.T) {
 
 	for _, test := range cases {
 		assert.Equal(t, test.exp, Increment(test.version, test.major, test.minor, test.patch), test.name)
+	}
+}
+
+func tmpDir(t *testing.T) string {
+	dir, err := ioutil.TempDir("", "semver")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return dir
+}
+
+func TestFindNext(t *testing.T) {
+	cases := []struct {
+		name  string
+		cmds  []string
+		repo  string
+		patch bool
+		minor bool
+		major bool
+	}{
+		{
+			name: "next bug",
+			cmds: strings.Split(heredoc.Doc(`
+				git init
+				git commit --allow-empty -m initial.import
+				git tag v0.1.0
+				git commit --allow-empty -m bug:-test`), "\n"),
+			repo:  tmpDir(t),
+			patch: true,
+		},
+		{
+			name: "next minor",
+			cmds: strings.Split(heredoc.Doc(`
+				git init
+				git commit --allow-empty -m initial.import
+				git tag v0.1.0
+				git commit --allow-empty -m feature:-test
+				git commit --allow-empty -m bug:-test`), "\n"),
+			repo:  tmpDir(t),
+			minor: true,
+		},
+	}
+
+	for _, test := range cases {
+		err := os.Chdir(test.repo)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		for _, c := range test.cmds {
+			_, err := Eval(c)
+			if err != nil {
+				t.Fatal(err)
+			}
+		}
+
+		major, minor, patch := FindNext("v0.1.0")
+
+		assert.Equal(t, test.patch, patch, test.name+" patch")
+		assert.Equal(t, test.minor, minor, test.name+" minor")
+		assert.Equal(t, test.major, major, test.name+" major")
 	}
 }

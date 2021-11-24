@@ -21,7 +21,7 @@ func Eval(command string) ([]string, error) {
 	cmd.Stderr = &stderr
 	err := cmd.Run()
 	if err != nil {
-		return []string{}, err
+		return []string{stderr.String()}, err
 	}
 
 	return strings.Split(strings.TrimSuffix(string(stdout.Bytes()), "\n"), "\n"), nil
@@ -87,4 +87,45 @@ func Increment(version string, major, minor, patch bool) string {
 	}
 
 	return "v" + newV.String()
+}
+
+func FindNext(lastTag string) (major bool, minor bool, patch bool) {
+	log.WithFields(log.Fields{
+		"lastTag": lastTag,
+	}).Debug("Calculating next release type")
+
+	gitLog := fmt.Sprintf("git log --format=%%s %s..HEAD", lastTag)
+
+	cmd := exec.Command("bash", "-c", gitLog)
+
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	if err := cmd.Run(); err != nil {
+		log.WithFields(log.Fields{
+			"stderr": stderr.String(),
+			"gitLog": gitLog,
+		}).Error("Failed to execute command")
+	}
+
+	for _, line := range strings.Split(stdout.String(), "\n") {
+		log.WithFields(log.Fields{
+			"line": line,
+		}).Debug("git log line")
+
+		if strings.HasPrefix(line, "bug:") {
+
+			patch = true
+			fmt.Println(fmt.Sprintf("patch: %+v", patch))
+		}
+
+		if strings.HasPrefix(line, "feature:") {
+			minor = true
+			fmt.Println(fmt.Sprintf("minor: %+v", minor))
+
+		}
+	}
+
+	return false, minor, !minor && patch
 }
