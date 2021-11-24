@@ -114,17 +114,8 @@ func FindNext(lastTag string) (major bool, minor bool, patch bool) {
 			"line": line,
 		}).Debug("git log line")
 
-		if strings.HasPrefix(line, "bug:") {
-
-			patch = true
-			fmt.Println(fmt.Sprintf("patch: %+v", patch))
-		}
-
-		if strings.HasPrefix(line, "feature:") {
-			minor = true
-			fmt.Println(fmt.Sprintf("minor: %+v", minor))
-
-		}
+		patch = strings.HasPrefix(line, "bug:")
+		minor = strings.HasPrefix(line, "feature:")
 	}
 
 	return false, minor, !minor && patch
