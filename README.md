@@ -12,10 +12,10 @@ Usage:
   semver [command]
 
 Available Commands:
-  autocomplete Generate completion script
-  current      Show the current tag
-  help         Help about any command
-  update       Update the binary with a new version
+  completion  generate the autocompletion script for the specified shell
+  current     Show the current tag
+  help        Help about any command
+  update      Update the binary with a new version
 
 Flags:
   -n, --dryrun    Dry run mode
