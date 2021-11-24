@@ -10,9 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	version string
-)
+var version string
 
 var rootCmd = &cobra.Command{
 	Use:     "semver",
@@ -76,7 +74,6 @@ func tags() ([]string, string) {
 		log.WithFields(log.Fields{
 			"err": err,
 		}).Panic("Cannot get pwd")
-
 	}
 
 	abs, err := filepath.Abs(pwd)
@@ -85,13 +82,12 @@ func tags() ([]string, string) {
 			"err": err,
 			"pwd": pwd,
 		}).Panic("Cannot get abs path")
-
 	}
 
 	return tag.Get(abs), abs
 }
 
-// Verbose Increase verbosity
+// Verbose Increase verbosity.
 func Verbose(cmd *cobra.Command) {
 	verbose, err := cmd.Flags().GetBool("verbose")
 	if err != nil {
@@ -102,6 +98,7 @@ func Verbose(cmd *cobra.Command) {
 		log.SetLevel(log.DebugLevel)
 	}
 }
+
 func init() {
 	rootCmd.Flags().BoolP("major", "M", false, "Perform a major release")
 	rootCmd.Flags().BoolP("minor", "m", true, "Perform a minor release")
