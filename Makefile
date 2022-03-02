@@ -6,14 +6,14 @@ SHELL := bash
 .SHELLFLAGS := -eu -o pipefail -c
 .ONESHELL:
 
-GIT_REF := $(shell git rev-parse --short HEAD)
-GIT_TAG := $(shell git name-rev --tags --name-only $(GIT_REF))
+GIT_TAG := $(shell git describe --tags --always --dirty=+)
+
 
 .PHONY: all
 all: ./bin/semver.darwin ./bin/semver.linux
 
 ./bin/semver.%: $(shell find ./ -name '*.go')
-	GOOS=$* go build -o $@ -ldflags "-X github.com/mhristof/semver/cmd.version=$(GIT_TAG)+$(GIT_REF)" main.go
+	GOOS=$* go build -o $@ -ldflags "-X github.com/mhristof/semver/cmd.version=$(GIT_TAG)" main.go
 
 .PHONY: install
 install: ./bin/semver.darwin
