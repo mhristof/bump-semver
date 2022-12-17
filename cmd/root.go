@@ -65,16 +65,37 @@ var rootCmd = &cobra.Command{
 
 		next := tag.Increment(lastTag, major, minor, patch)
 
-		gitCmd := fmt.Sprintf("git -C %s tag %s", abs, next)
-		if silent, _ := cmd.Flags().GetBool("silent"); !silent {
-			fmt.Println(gitCmd)
+		cmds := []string{
+			fmt.Sprintf("git -C %s tag %s", abs, next),
 		}
 
-		if dryrun, _ := cmd.Flags().GetBool("dryrun"); dryrun {
-			return
+		push, err := cmd.Flags().GetBool("push")
+		if err != nil {
+			panic(err)
 		}
 
-		tag.Eval(gitCmd)
+		if push {
+			cmds = append(cmds, fmt.Sprintf("git -C %s push origin %s", abs, next))
+		}
+
+		for _, command := range cmds {
+			if silent, _ := cmd.Flags().GetBool("silent"); !silent {
+				fmt.Println(command)
+			}
+
+			if dryrun, _ := cmd.Flags().GetBool("dryrun"); dryrun {
+				continue
+			}
+
+			stdout, err := tag.Eval(command)
+			if err != nil {
+				log.WithFields(log.Fields{
+					"err":    err,
+					"cmd":    command,
+					"stdout": stdout,
+				}).Panic("cannot execute command")
+			}
+		}
 	},
 }
 
@@ -114,6 +135,7 @@ func init() {
 	rootCmd.Flags().BoolP("minor", "m", false, "Perform a minor release. Default if auto is disabled.")
 	rootCmd.Flags().BoolP("patch", "p", false, "Perform a patch release")
 	rootCmd.Flags().BoolP("silent", "s", false, "Disable all output")
+	rootCmd.Flags().BoolP("push", "P", true, "Push tags generated")
 	rootCmd.Flags().BoolP("auto", "a", true, "Autodetect next version based on commit messages")
 
 	rootCmd.PersistentFlags().BoolP("dryrun", "n", false, "Dry run mode")
