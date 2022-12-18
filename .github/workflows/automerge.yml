@@ -28,3 +28,4 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_METHOD: "rebase"
           MERGE_DELETE_BRANCH: true
+          MERGE_LABELS: ""
