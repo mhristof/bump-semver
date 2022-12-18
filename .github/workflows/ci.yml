@@ -17,11 +17,3 @@ jobs:
           git config --global user.name "github"
           make test
       - run: make all
-  automerge:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: automerge
-        uses: mhristof/github-action-automerge@v1.1.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
