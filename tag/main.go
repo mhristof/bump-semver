@@ -117,9 +117,6 @@ func FindNext(lastTag string) (major bool, minor bool, patch bool) {
 
 		majorRegex := regexp.MustCompile(`\w*\!`)
 
-		println(line)
-		println(majorRegex.MatchString(line))
-
 		major = major || majorRegex.MatchString(line)
 		patch = patch || strings.HasPrefix(line, "bug") || strings.HasPrefix(line, "fix")
 		minor = minor || strings.HasPrefix(line, "feature") || strings.HasPrefix(line, "feat")

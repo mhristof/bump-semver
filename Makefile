@@ -17,6 +17,7 @@ all: ./bin/semver.darwin ./bin/semver.linux
 
 .PHONY: install
 install: ./bin/semver.darwin
+	rm -f ~/.local/bin/semver
 	cp $< ~/.local/bin/semver
 
 .PHONY: fast-test
