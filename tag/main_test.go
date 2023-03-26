@@ -140,6 +140,28 @@ func TestFindNext(t *testing.T) {
 			minor: true,
 		},
 		{
+			name: "next major",
+			cmds: strings.Split(heredoc.Doc(`
+				git init
+				git commit --allow-empty -m initial.import
+				git tag v0.1.0
+				git commit --allow-empty -m feat!:test
+				git commit --allow-empty -m 'bug:-test`), "\n"),
+			repo:  tmpDir(t),
+			major: true,
+		},
+		{
+			name: "next major with scope",
+			cmds: strings.Split(heredoc.Doc(`
+				git init
+				git commit --allow-empty -m initial.import
+				git tag v0.1.0
+				git commit --allow-empty -m feat(foo)!:test
+				git commit --allow-empty -m bug:-test`), "\n"),
+			repo:  tmpDir(t),
+			major: true,
+		},
+		{
 			name: "cannot determine next version",
 			cmds: strings.Split(heredoc.Doc(`
 				git init
@@ -160,7 +182,7 @@ func TestFindNext(t *testing.T) {
 		for _, c := range test.cmds {
 			_, err := Eval(c)
 			if err != nil {
-				t.Fatal(err)
+				t.Fatal(err, c)
 			}
 		}
 

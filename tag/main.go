@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -114,6 +115,12 @@ func FindNext(lastTag string) (major bool, minor bool, patch bool) {
 			continue
 		}
 
+		majorRegex := regexp.MustCompile(`\w*\!`)
+
+		println(line)
+		println(majorRegex.MatchString(line))
+
+		major = major || majorRegex.MatchString(line)
 		patch = patch || strings.HasPrefix(line, "bug") || strings.HasPrefix(line, "fix")
 		minor = minor || strings.HasPrefix(line, "feature") || strings.HasPrefix(line, "feat")
 
@@ -124,5 +131,5 @@ func FindNext(lastTag string) (major bool, minor bool, patch bool) {
 		}).Debug("git log line")
 	}
 
-	return false, minor, !minor && patch
+	return major, !major && minor, !major && !minor && patch
 }
